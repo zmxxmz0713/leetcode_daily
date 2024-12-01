@@ -1,0 +1,40 @@
+const pair<int, string> valueSymbols[] = {
+    {1000, "M"},
+    {900,  "CM"},
+    {500,  "D"},
+    {400,  "CD"},
+    {100,  "C"},
+    {90,   "XC"},
+    {50,   "L"},
+    {40,   "XL"},
+    {10,   "X"},
+    {9,    "IX"},
+    {5,    "V"},
+    {4,    "IV"},
+    {1,    "I"},
+};
+
+class Solution {
+public:
+    // 声明一个名为`intToRoman`的成员函数，它接收一个整数`num`并返回一个字符串，表示该整数的罗马数字形式。
+    string intToRoman(int num) {
+        // 初始化一个空字符串`roman`，用于构建最终的罗马数字表示。
+        string roman;
+        // 使用基于范围的for循环遍历`valueSymbols`数组中的每个元素。
+        for (const auto &[value, symbol] : valueSymbols) {
+            // 当`num`大于或等于当前罗马数字对应的整数值`value`时，执行循环。
+            while (num >= value) {
+                // 从`num`中减去`value`，表示当前罗马数字已经被添加到结果中。
+                num -= value;
+                // 将对应的罗马数字符号`symbol`添加到字符串`roman`的末尾。
+                roman += symbol;
+            }
+            // 如果`num`已经减到0，表示所有的数值都已经转换成罗马数字，因此可以提前结束循环。
+            if (num == 0) {
+                break;
+            }
+        }
+        // 返回构建好的罗马数字字符串。
+        return roman;
+    }
+};
