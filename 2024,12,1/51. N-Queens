@@ -1,0 +1,81 @@
+class Solution {
+public:
+    // 声明一个成员函数solveNQueens，它接收一个整数n，表示棋盘的大小，并返回一个二维字符串向量，表示所有可能的解决方案。
+    vector<vector<string>> solveNQueens(int n) {
+        // 初始化一个二维字符串向量solutions，用于存储所有可能的N皇后问题的解决方案。
+        auto solutions = vector<vector<string>>();
+        // 初始化一个整数向量queens，大小为n，所有元素初始化为-1，用于表示棋盘上每一行的皇后所在的列位置。
+        auto queens = vector<int>(n, -1);
+        // 使用unordered_set来存储已经被占用的列。
+        auto columns = unordered_set<int>();
+        // 使用unordered_set来存储已经被占用的主对角线（行索引减去列索引）。
+        auto diagonals1 = unordered_set<int>();
+        // 使用unordered_set来存储已经被占用的副对角线（行索引加上列索引）。
+        auto diagonals2 = unordered_set<int>();
+        // 调用回溯函数backtrack来寻找所有可能的解决方案。
+        backtrack(solutions, queens, n, 0, columns, diagonals1, diagonals2);
+        // 返回找到的所有解决方案。
+        return solutions;
+    }
+
+    // 声明一个成员函数backtrack，用于递归地寻找N皇后问题的解决方案。
+    void backtrack(vector<vector<string>> &solutions, vector<int> &queens, int n, int row, unordered_set<int> &columns, unordered_set<int> &diagonals1, unordered_set<int> &diagonals2) {
+        // 如果row等于n，说明已经成功放置了n个皇后，即找到了一个解决方案。
+        if (row == n) {
+            // 调用generateBoard函数生成当前解决方案对应的棋盘布局。
+            vector<string> board = generateBoard(queens, n);
+            // 将生成的棋盘布局添加到解决方案列表中。
+            solutions.push_back(board);
+        } else {
+            // 遍历当前行的每一列，尝试放置皇后。
+            for (int i = 0; i < n; i++) {
+                // 如果当前列已经被占用，则跳过。
+                if (columns.find(i) != columns.end()) {
+                    continue;
+                }
+                // 计算当前行的皇后放置位置对应的主对角线编号。
+                int diagonal1 = row - i;
+                // 如果主对角线已经被占用，则跳过。
+                if (diagonals1.find(diagonal1) != diagonals1.end()) {
+                    continue;
+                }
+                // 计算当前行的皇后放置位置对应的副对角线编号。
+                int diagonal2 = row + i;
+                // 如果副对角线已经被占用，则跳过。
+                if (diagonals2.find(diagonal2) != diagonals2.end()) {
+                    continue;
+                }
+                // 在当前行放置皇后。
+                queens[row] = i;
+                // 标记当前列、主对角线和副对角线为已占用。
+                columns.insert(i);
+                diagonals1.insert(diagonal1);
+                diagonals2.insert(diagonal2);
+                // 递归地继续在下一行放置皇后。
+                backtrack(solutions, queens, n, row + 1, columns, diagonals1, diagonals2);
+                // 回溯：撤销当前行的皇后放置，并清除对应的列、主对角线和副对角线的占用标记。
+                queens[row] = -1;
+                columns.erase(i);
+                diagonals1.erase(diagonal1);
+                diagonals2.erase(diagonal2);
+            }
+        }
+    }
+
+    // 声明一个成员函数generateBoard，它根据皇后在每一行的位置生成对应的棋盘布局。
+    vector<string> generateBoard(vector<int> &queens, int n) {
+        // 初始化一个字符串向量board，用于存储棋盘的每一行。
+        auto board = vector<string>();
+        // 遍历queens向量，生成棋盘的每一行。
+        for (int i = 0; i < n; i++) {
+            // 初始化一个字符串row，全部由'.'组成，表示空位。
+            string row = string(n, '.');
+            // 在正确的位置放置'Q'，表示皇后的位置。
+            row[queens[i]] = 'Q';
+            // 将生成的行添加到棋盘布局中。
+            board.push_back(row);
+        }
+        // 返回生成的棋盘布局。
+        return board;
+    }
+};
